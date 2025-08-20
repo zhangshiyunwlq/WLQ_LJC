@@ -57,12 +57,26 @@ def run_FEM_analysis(building_data):
     story_dis_max_y = max(story_dis[key]['max_y'] for key in story_dis)
 
     dis_data = [inter_dis_max_x, inter_dis_max_y, story_dis_max_x, story_dis_max_y]
+    max_dis = max(dis_data)
 
-    return total_weight, max_force,dis_data
+    if max_force >=1:
+        result_force = -3
+    else:
+        result_force = 1-max_force
+
+
+    if max_dis >=1:
+        result_dis = -3
+    else:
+        result_dis = 1-max_force
+
+
+    return total_weight, result_force,result_dis
 
 if __name__ == "__main__":
     building_data=[3900, 3500, 3500, 3800, 3500, 3500, 3500, 3500, 3000, 3500, 3000, 3500, 3500, 3200, 3200, 3200, 3200, 3200, 3200, 3100, 3200, 3100, 3100, 3100, 4000, 3600, 3600, 3400, 3400, 3400, 3400, 3400, 3400, 3100, 3100]
 
 
     total_weight, max_force,dis_data=run_FEM_analysis(building_data)
+    a= 1
 
