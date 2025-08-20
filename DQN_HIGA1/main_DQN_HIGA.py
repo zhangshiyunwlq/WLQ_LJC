@@ -1,18 +1,13 @@
 
-from json_handler import JSONHandler
-from modular_generator import ModluarGenarator
-from structure_FEM import Structural_model
+from .json_handler import JSONHandler
+from .modular_generator import ModluarGenarator
+from .structure_FEM import Structural_model
 
-from modular_scheme_gener import run_generate_data
+from .modular_scheme_gener import run_generate_data
 
-import os
-import ezdxf
-import numpy as np
 import json
-from config import DXF_FILE, JSON_FILE, MATERIAL_FILE
-import openseespy.opensees as ops
-import opstool as opst
-import opstool.vis.pyvista as opsvis
+from .config import DXF_FILE, JSON_FILE, MATERIAL_FILE
+
 
 
 def run_FEM_analysis(building_data):
