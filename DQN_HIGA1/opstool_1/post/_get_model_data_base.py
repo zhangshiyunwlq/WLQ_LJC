@@ -1,8 +1,7 @@
 from collections import defaultdict
 import numpy as np
 import openseespy.opensees as ops
-
-from opstool_1.utils import (
+from DQN_HIGA1.opstool_1.utils import (
     OPS_ELE_TAGS,
     OPS_ELE_CLASSTAG2TYPE,
 )
