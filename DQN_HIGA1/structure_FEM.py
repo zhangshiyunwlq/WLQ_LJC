@@ -1,22 +1,13 @@
 import copy
-import json
 import os
 import openseespy.opensees as ops
-import opstool_1 as opst
-# import opstool_1.vis.plotly as opsvis
-import opstool_1.vis.pyvista as opsvis
-import pyvista as pv
+from . import opstool_1 as opst
 import numpy as np
-import random
 import matplotlib.pyplot as plt
 from netCDF4 import Dataset
 from collections import defaultdict
 import math
-from pathlib import Path
-import inspect
-import xarray as xr
 from scipy.spatial import ConvexHull
-import time
 
 
 

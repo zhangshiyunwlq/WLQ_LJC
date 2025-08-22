@@ -1,4 +1,6 @@
 import copy
+import sys
+import os
 
 import numpy as np
 import torch
@@ -7,8 +9,10 @@ import torch.optim as optim
 import random
 from collections import deque, namedtuple, Counter
 import matplotlib.pyplot as plt
-import os
 from segment_tree import MinSegmentTree, SumSegmentTree
+
+from DQN_HIGA1.main_DQN_HIGA import run_FEM_analysis
+
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
 # 经验回放缓冲区
@@ -369,6 +373,35 @@ class BrickEnv:
         self.module_layout = list()
         return self._get_state()
 
+    def adjust_room_boundaries(self, boundaries, module_positions):
+            new_boundaries = []
+            boundary_crossed = False
+
+            if len(module_positions) == 0:
+                return [None for _ in range(len(boundaries))]
+
+            for boundary in boundaries:
+                if boundary_crossed:
+                    new_boundaries.append(None)
+                    continue
+
+                left = max((pos for pos in module_positions if pos <= boundary), default=None)
+                right = min((pos for pos in module_positions if pos > boundary), default=None)
+
+                if left is not None and right is not None:
+                    if abs(boundary - left) <= abs(boundary - right):
+                        new_boundaries.append(left)
+                    else:
+                        new_boundaries.append(right)
+                elif boundaries[-1] - module_positions[-1] < 1e-6:
+                    new_boundaries.append(module_positions[-1])
+                    boundary_crossed = True
+                else:
+                    new_boundaries.append(None)
+                    boundary_crossed = True
+
+            return new_boundaries
+
     def _get_state(self):
 
         module_num = len(self.module_layout)
@@ -404,37 +437,8 @@ class BrickEnv:
 
         room_info = []
 
-        def adjust_room_boundaries(boundaries, module_positions):
-            new_boundaries = []
-            boundary_crossed = False
-
-            if len(module_positions) == 0:
-                return [None for _ in range(len(boundaries))]
-
-            for boundary in boundaries:
-                if boundary_crossed:
-                    new_boundaries.append(None)
-                    continue
-
-                left = max((pos for pos in module_positions if pos <= boundary), default=None)
-                right = min((pos for pos in module_positions if pos > boundary), default=None)
-
-                if left is not None and right is not None:
-                    if abs(boundary - left) <= abs(boundary - right):
-                        new_boundaries.append(left)
-                    else:
-                        new_boundaries.append(right)
-                elif boundaries[-1] - module_positions[-1] < 1e-6:
-                    new_boundaries.append(module_positions[-1])
-                    boundary_crossed = True
-                else:
-                    new_boundaries.append(None)
-                    boundary_crossed = True
-
-            return new_boundaries
-
         for i, tp_room in enumerate(tp_room_list):
-            tp_room_new = adjust_room_boundaries(tp_room, self.brick_positions)
+            tp_room_new = self.adjust_room_boundaries(tp_room, self.brick_positions)
             for j in range(len(tp_room)-1):
 
 
@@ -517,7 +521,7 @@ class BrickEnv:
             tp_room_num += count
         room_info = []
         for i, tp_room in enumerate(tp_room_list):
-            tp_room_new = ut.adjust_room_boundaries(tp_room, self.brick_positions)
+            tp_room_new = self.adjust_room_boundaries(tp_room, self.brick_positions)
             for j in range(len(tp_room)-1):
                 if tp_room_new[j+1] != None:
                     a = (abs(tp_room_new[j] - tp_room[j]) + abs(tp_room_new[j+1] - tp_room[j+1]))
@@ -618,6 +622,7 @@ class BrickEnv:
             module_num = len(self.module_layout)
             module_type = len(count)
             opt_type_usage = [count[key] / module_num for key in self.mo_opt_type] if module_num > 0 else [0] * len(self.mo_opt_type)
+            total_weight, max_force, dis_data = run_FEM_analysis(self.module_layout)
 
             for term in opt_type_usage:
                 if term != 0:
@@ -625,6 +630,17 @@ class BrickEnv:
 
             success = True
 
+            if max_force < 1.:
+                reward += 1
+            else:
+                success = False
+                reward -= 5
+
+            if dis_data < 1.:
+                reward += 1
+            else:
+                success = False
+                reward -= 5
         # if done:
         #     reward -= len(self.module_layout) * 0.1
 
