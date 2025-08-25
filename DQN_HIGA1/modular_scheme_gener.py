@@ -721,29 +721,57 @@ def run_generate_data(building_data):
 
 if __name__ == "__main__":
 
-    with open('data_save_20_wlq.json', 'r', encoding='utf-8') as f:
-        split_data = json.load(f)
+    # with open('data_save_20_wlq.json', 'r', encoding='utf-8') as f:
+    #     split_data = json.load(f)
+    #
+    # data_groups1 = [split_data[i:i + 3] for i in range(0, len(split_data), 3)]
+    #
+    # all_split_succeed = []
+    # for i in range(len(data_groups1)):
+    #     all_split_succeed.append(data_groups1[i][0])
+    #
+    # perfect_lists = find_perfect_groups(all_split_succeed, targets)
+    #
 
-    data_groups1 = [split_data[i:i + 3] for i in range(0, len(split_data), 3)]
-
-    all_split_succeed = []
-    for i in range(len(data_groups1)):
-        all_split_succeed.append(data_groups1[i][0])
+    perfect_data = [
+        4000,
+        4000,
+        4000,
+        3200,
+        3200,
+        3200,
+        3600,
+        3200,
+        3400,
+        3400,
+        4000,
+        4000,
+        3600,
+        4000,
+        4000,
+        3600,
+        3600,
+        3600,
+        3600,
+        3600,
+        3600,
+        3600,
+        3600,
+        3500,
+        3500,
+        3500,
+        3500,
+        3500,
+        3500,
+        3200,
+        3500,
+        3500,
+        3000
+    ]
     targets = [25200, 29600, 25200, 37800]
-    perfect_lists = find_perfect_groups(all_split_succeed, targets)
+    # groups = group_by_sum(perfect_lists[0], targets)
+    groups = group_by_sum(perfect_data, targets)
 
-
-    groups = group_by_sum(perfect_lists[0], targets)
-
-    print("\n分组结果：")
-    for i, group in enumerate(groups):
-        print(f"\n第{i + 1}组 (目标和: {targets[i] if i < len(targets) else '未指定'}):")
-        print(f"数据: {group}")
-        print(f"实际和: {sum(group)}")
-
-    # modular_list1 = [3400, 3000, 3100, 3100]
-    # modular_list2 = [4000, 3800, 3800, 3800, 3800, 3800, 3300, 3300]
-    # modular_list3 = [3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3900, 3900]
 
     modular_list1 = groups[0]
     modular_list2 = groups[1]
@@ -781,7 +809,7 @@ if __name__ == "__main__":
 
     type_2_modules = convert_to_polyline_format(classified_modules)
     # 绘制以上转化的结果
-    # plot_modules_by_type(type_2_modules)
+    plot_modules_by_type(type_2_modules)
 
     # 指定每个建筑的楼层文本
     classified_modules = [

@@ -1,7 +1,7 @@
 import copy
 import os
 import openseespy.opensees as ops
-from . import opstool_1 as opst
+import opstool_1 as opst
 import numpy as np
 import matplotlib.pyplot as plt
 from netCDF4 import Dataset
