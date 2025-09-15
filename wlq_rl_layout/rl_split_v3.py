@@ -642,7 +642,7 @@ class BrickEnv:
                 success = False
                 reward -= 5
             if total_weight<=8200 :
-                weight_reward = ((8200-total_weight)/(8200-2500))*1.5
+                weight_reward = ((8200-total_weight)/(8200-2500))*3.5
             elif total_weight>8200:
                 weight_reward =-1.5
             reward +=weight_reward
